@@ -1,0 +1,59 @@
+{
+  "title": "DeFi LP Calculator",
+  "poolDetails": "Pool Details",
+  "yieldSettings": "Yield Settings",
+  "initialBalance": "Initial Balance",
+  "currentBalance": "Current Balance",
+  "dailyYield": "Daily Yield",
+  "simulationDays": "Simulation Days",
+  "metrics": {
+    "pendingYield": "Pending Yield (24h)",
+    "projectedYield": "Projected Yield",
+    "estimatedApr": "Estimated APR",
+    "monthlyApr": "Monthly APR",
+    "impermanentLoss": "Impermanent Loss",
+    "adjustedYield": "Adjusted Total Yield",
+    "days": "days"
+  },
+  "tooltips": {
+    "pendingYield": "Expected yield for the next 24 hours based on your current balance",
+    "projectedYield": "Total projected yield based on your current balance over the simulation period",
+    "estimatedApr": "Annual Percentage Rate based on your daily yield",
+    "monthlyApr": "Monthly Percentage Rate calculated from the Annual Rate",
+    "impermanentLoss": "Temporary loss of funds due to price ratio changes between paired tokens",
+    "adjustedYield": "Net projected yield after accounting for impermanent loss"
+  },
+  "currency": {
+    "exchangeRate": "Exchange Rate",
+    "usdToBrl": "1 USD = {{rate}} BRL"
+  },
+  "admin": {
+    "title": "Administration Panel",
+    "save": "Save Changes",
+    "privacyPolicy": "Privacy Policy (URL)",
+    "termsOfService": "Terms of Service (URL)",
+    "legalSection": "Legal Settings",
+    "generalSection": "General Settings",
+    "footerSection": "Footer Settings",
+    "footerText": "Footer Text",
+    "buyMeACoffeeText": "Buy Me a Coffee Text",
+    "walletNetwork": "Wallet Network",
+    "walletAddress": "Wallet Address",
+    "websiteConfig": "Website Configuration",
+    "websiteUrl": "Website URL",
+    "websiteText": "Website Text",
+    "websiteTextColor": "Website Text Color",
+    "menus": {
+      "general": "General",
+      "colors": "Colors",
+      "texts": "Texts",
+      "wallet": "Wallet",
+      "website": "Website"
+    }
+  },
+  "footer": {
+    "buyMeACoffee": "Buy Me a Coffee",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  }
+}

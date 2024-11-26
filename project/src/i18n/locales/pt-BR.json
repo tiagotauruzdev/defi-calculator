@@ -1,0 +1,61 @@
+{
+  "title": "Calculadora DeFi LP",
+  "poolDetails": "Detalhes do Pool",
+  "yieldSettings": "Configurações de Rendimento",
+  "initialBalance": "Saldo Inicial",
+  "currentBalance": "Saldo Atual",
+  "dailyYield": "Rendimento Diário",
+  "simulationDays": "Dias de Simulação",
+  "metrics": {
+    "pendingYield": "Rendimento Pendente (24h)",
+    "projectedYield": "Rendimento Projetado",
+    "estimatedApr": "APR Estimado",
+    "monthlyApr": "APR Mensal",
+    "impermanentLoss": "Perda Impermanente",
+    "adjustedYield": "Rendimento Total Ajustado",
+    "days": "dias"
+  },
+  "tooltips": {
+    "pendingYield": "Rendimento esperado para as próximas 24 horas com base no seu saldo atual",
+    "projectedYield": "Rendimento total projetado com base no seu saldo atual durante o período de simulação",
+    "estimatedApr": "Taxa Percentual Anual baseada no seu rendimento diário",
+    "monthlyApr": "Taxa Percentual Mensal calculada a partir da Taxa Anual",
+    "impermanentLoss": "Perda temporária de fundos devido a mudanças na proporção de preços entre os tokens pareados",
+    "adjustedYield": "Rendimento projetado líquido após considerar a perda impermanente"
+  },
+  "currency": {
+    "exchangeRate": "Taxa de Câmbio",
+    "usdToBrl": "1 USD = {{rate}} BRL"
+  },
+  "poolDetailsDescription": "Detalhes do pool, incluindo o nome, a taxa de liquidez e a taxa de swap",
+  "yieldSettingsDescription": "Configurações de rendimento, incluindo a taxa de rendimento diário e a taxa de rendimento anual",
+  "admin": {
+    "title": "Painel Administrativo",
+    "save": "Salvar Alterações",
+    "privacyPolicy": "Política de Privacidade (URL)",
+    "termsOfService": "Termos de Uso e Serviços (URL)",
+    "legalSection": "Configurações Legais",
+    "generalSection": "Configurações Gerais",
+    "footerSection": "Configurações do Rodapé",
+    "footerText": "Texto do Rodapé",
+    "buyMeACoffeeText": "Texto do Compre-me um Café",
+    "walletNetwork": "Rede da Carteira",
+    "walletAddress": "Endereço da Carteira",
+    "websiteConfig": "Configuração do Site",
+    "websiteUrl": "URL do Site",
+    "websiteText": "Texto do Site",
+    "websiteTextColor": "Cor do Texto do Site",
+    "menus": {
+      "general": "Geral",
+      "colors": "Cores",
+      "texts": "Textos",
+      "wallet": "Carteira",
+      "website": "Site"
+    }
+  },
+  "footer": {
+    "buyMeACoffee": "Compre-me um Café",
+    "privacyPolicy": "Política de Privacidade",
+    "termsOfService": "Termos de Uso e Serviços"
+  }
+}
