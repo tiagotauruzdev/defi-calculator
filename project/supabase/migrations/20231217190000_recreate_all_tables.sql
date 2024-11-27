@@ -29,7 +29,7 @@ CREATE POLICY "Allow public read access for login"
 
 -- Insert default admin with bcrypt hash of 'admin123'
 INSERT INTO admins (username, password_hash)
-VALUES ('admin@defi-calculator.com', '$2a$10$HrojLZslJNVf9MHl0eIlheATpnfqRAUjS76tfOVa2d9aTEL20ZMOa');
+VALUES ('admin', '$2a$10$HrojLZslJNVf9MHl0eIlheATpnfqRAUjS76tfOVa2d9aTEL20ZMOa');
 
 -- Create configurations table
 CREATE TABLE configurations (
@@ -60,10 +60,7 @@ CREATE POLICY "Allow admin write access"
     USING (
         EXISTS (
             SELECT 1 FROM admins 
-            WHERE admins.username = (
-                SELECT email FROM auth.users 
-                WHERE id = auth.uid()
-            )::text
+            WHERE admins.username = 'admin'
         )
     );
 
@@ -96,8 +93,8 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 
 -- Insert default configurations
 INSERT INTO configurations (key, value, created_by, updated_by) VALUES
-    ('title', '"DeFi Calculator"', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
-    ('description', '"Calcule seus rendimentos em criptomoedas"', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
+    ('title', '"DeFi Calculator"', 'admin', 'admin'),
+    ('description', '"Calcule seus rendimentos em criptomoedas"', 'admin', 'admin'),
     ('colors', '{
         "primary": "#3B82F6",
         "secondary": "#1F2937",
@@ -109,18 +106,18 @@ INSERT INTO configurations (key, value, created_by, updated_by) VALUES
         "termsLink": "#3B82F6",
         "footerText": "#9CA3AF",
         "buyMeACoffeeText": "#F59E0B"
-    }', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
+    }', 'admin', 'admin'),
     ('customTexts', '{
         "title": "DeFi Calculator",
         "description": "Calcule seus rendimentos em criptomoedas",
         "footerText": "Desenvolvido por Tiago Tauruz",
         "buyMeACoffeeText": "Buy me a coffee"
-    }', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
-    ('wallet1Network', '"SOL"', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
-    ('wallet1Address', '"sua-carteira-sol"', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
-    ('wallet2Network', '"ETH"', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
-    ('wallet2Address', '"sua-carteira-eth"', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
-    ('wallet3Network', '"BTC"', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
-    ('wallet3Address', '"sua-carteira-btc"', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
-    ('logo', '""', 'admin@defi-calculator.com', 'admin@defi-calculator.com'),
-    ('favicon', '""', 'admin@defi-calculator.com', 'admin@defi-calculator.com');
+    }', 'admin', 'admin'),
+    ('wallet1Network', '"SOL"', 'admin', 'admin'),
+    ('wallet1Address', '"sua-carteira-sol"', 'admin', 'admin'),
+    ('wallet2Network', '"ETH"', 'admin', 'admin'),
+    ('wallet2Address', '"sua-carteira-eth"', 'admin', 'admin'),
+    ('wallet3Network', '"BTC"', 'admin', 'admin'),
+    ('wallet3Address', '"sua-carteira-btc"', 'admin', 'admin'),
+    ('logo', '""', 'admin', 'admin'),
+    ('favicon', '""', 'admin', 'admin');

@@ -10,7 +10,7 @@ interface ConfigContextType {
   saveConfig: () => Promise<boolean>;
   isAdmin: boolean;
   login: (username: string, password: string) => Promise<boolean>;
-  logout: () => Promise<void>;
+  logout: () => void;
   isLoading: boolean;
 }
 
@@ -161,30 +161,6 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
 
-      // Faz login no Supabase Auth
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: username,
-        password: password
-      });
-
-      if (signInError) {
-        // Se o usuário não existe, cria um novo
-        if (signInError.message.includes('Invalid login credentials')) {
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: username,
-            password: password
-          });
-
-          if (signUpError) {
-            console.error('Erro ao criar usuário no Supabase:', signUpError);
-            return false;
-          }
-        } else {
-          console.error('Erro ao fazer login no Supabase:', signInError);
-          return false;
-        }
-      }
-
       // Atualiza o estado
       setIsAdmin(true);
       setCurrentUsername(username);
@@ -207,17 +183,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Erro ao fazer logout:', error);
-      }
-      setIsAdmin(false);
-      setCurrentUsername(null);
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    }
+  const logout = () => {
+    setIsAdmin(false);
+    setCurrentUsername(null);
   };
 
   const resetConfig = () => {
