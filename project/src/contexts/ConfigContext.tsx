@@ -134,30 +134,41 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = async (email: string, password: string) => {
-    const { data, error } = await supabase
-      .from('admins')
-      .select('*')
-      .eq('email', email)
-      .single();
+    try {
+      // Primeiro, tenta fazer login com o Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error || !data) {
+      if (authError) {
+        console.error('Erro de autenticação:', authError);
+        return false;
+      }
+
+      // Verifica se o usuário é um admin
+      const { data: adminData, error: adminError } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      if (adminError || !adminData) {
+        console.error('Usuário não é admin:', adminError);
+        await supabase.auth.signOut();
+        return false;
+      }
+
+      setIsAdmin(true);
+      return true;
+    } catch (error) {
+      console.error('Erro no login:', error);
       return false;
     }
-
-    // Em produção, use bcrypt ou similar para hash
-    if (data.password_hash === password) {
-      setIsAdmin(true);
-      await supabase
-        .from('admins')
-        .update({ last_login: new Date().toISOString() })
-        .eq('id', data.id);
-      return true;
-    }
-
-    return false;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setIsAdmin(false);
   };
 
