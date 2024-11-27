@@ -17,25 +17,6 @@ CREATE TABLE admins (
     last_login TIMESTAMPTZ
 );
 
--- Enable RLS on admins
-ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
-
--- Create policy for admins table (allow public access for login)
-DROP POLICY IF EXISTS "Enable public read for login" ON admins;
-CREATE POLICY "Enable public read for login"
-    ON admins
-    FOR SELECT
-    TO PUBLIC
-    USING (true);
-
--- Create policy for admins table (authenticated users can update their own data)
-DROP POLICY IF EXISTS "Enable update for authenticated users" ON admins;
-CREATE POLICY "Enable update for authenticated users"
-    ON admins
-    FOR UPDATE
-    TO PUBLIC
-    USING (true);
-
 -- Insert default admin with bcrypt hash of 'admin123'
 INSERT INTO admins (username, password_hash)
 VALUES ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy');
@@ -50,34 +31,6 @@ CREATE TABLE configurations (
     created_by TEXT REFERENCES admins(username),
     updated_by TEXT REFERENCES admins(username)
 );
-
--- Enable RLS on configurations
-ALTER TABLE configurations ENABLE ROW LEVEL SECURITY;
-
--- Create policy for public read access to configurations
-CREATE POLICY "Enable read access for all users"
-    ON configurations
-    FOR SELECT
-    TO public
-    USING (true);
-
--- Create policy for admin write access to configurations
-CREATE POLICY "Enable write access for admins"
-    ON configurations
-    FOR ALL
-    TO authenticated
-    USING (
-        EXISTS (
-            SELECT 1 FROM admins
-            WHERE admins.username = auth.jwt() ->> 'username'
-        )
-    )
-    WITH CHECK (
-        EXISTS (
-            SELECT 1 FROM admins
-            WHERE admins.username = auth.jwt() ->> 'username'
-        )
-    );
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -99,23 +52,6 @@ CREATE TRIGGER update_admins_updated_at
     BEFORE UPDATE ON admins
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
-
--- Function to update last_login timestamp
-CREATE OR REPLACE FUNCTION update_last_login()
-RETURNS TRIGGER AS $$
-BEGIN
-    UPDATE admins
-    SET last_login = NOW()
-    WHERE username = NEW.username;
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Create trigger for updating last_login on successful auth
-CREATE TRIGGER update_admin_last_login
-    AFTER INSERT ON auth.sessions
-    FOR EACH ROW
-    EXECUTE FUNCTION update_last_login();
 
 -- Insert default configurations
 INSERT INTO configurations (key, value, created_by, updated_by) VALUES
