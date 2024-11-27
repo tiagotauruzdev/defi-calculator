@@ -10,6 +10,7 @@ interface ConfigContextType {
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
+  isLoading: boolean;
 }
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
@@ -22,56 +23,36 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   const loadConfigFromSupabase = async () => {
     try {
       console.log('Carregando configurações do Supabase...');
-      const { data, error } = await supabase
+      const { data: configs, error } = await supabase
         .from('configurations')
-        .select('*')
-        .order('updated_at', { ascending: false });
+        .select('key, value');
 
       if (error) {
         console.error('Erro ao carregar configurações:', error);
         return;
       }
 
-      if (data && data.length > 0) {
-        console.log('Configurações carregadas:', data);
-        const configObject: Partial<AppConfig> = {};
-        
-        // Agrupa as configurações por chave principal
-        const groupedData = data.reduce((acc, item) => {
-          if (item.key.includes('.')) {
-            const [section, key] = item.key.split('.');
-            if (!acc[section]) acc[section] = {};
-            try {
-              acc[section][key] = JSON.parse(item.value);
-            } catch (e) {
-              acc[section][key] = item.value;
-            }
-          } else {
-            try {
-              acc[item.key] = JSON.parse(item.value);
-            } catch (e) {
-              acc[item.key] = item.value;
-            }
-          }
-          return acc;
-        }, {} as Record<string, any>);
-
-        // Atualiza o estado com as configurações agrupadas
-        setConfig(prev => ({
-          ...prev,
-          ...groupedData,
-          colors: {
-            ...prev.colors,
-            ...(groupedData.colors || {})
-          },
-          customTexts: {
-            ...prev.customTexts,
-            ...(groupedData.customTexts || {})
-          }
-        }));
-      } else {
-        console.log('Nenhuma configuração encontrada, usando padrões');
+      if (!configs || configs.length === 0) {
+        console.log('Nenhuma configuração encontrada');
+        return;
       }
+
+      const newConfig: Partial<AppConfig> = {};
+      
+      configs.forEach(({ key, value }) => {
+        if (key === 'colors' || key === 'customTexts') {
+          newConfig[key] = value;
+        } else {
+          newConfig[key] = JSON.parse(value);
+        }
+      });
+
+      setConfig(prev => ({
+        ...prev,
+        ...newConfig
+      }));
+
+      console.log('Configurações carregadas com sucesso:', newConfig);
     } catch (error) {
       console.error('Erro ao processar configurações:', error);
     }
@@ -81,32 +62,14 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('Salvando configurações no Supabase:', configToSave);
       
-      // Prepara as configurações para salvar
-      const configsToSave: { key: string; value: string; updated_at: string }[] = [];
+      const updates = Object.entries(configToSave).map(([key, value]) => ({
+        key,
+        value: key === 'colors' || key === 'customTexts' ? value : JSON.stringify(value)
+      }));
 
-      // Processa as configurações
-      for (const [key, value] of Object.entries(configToSave)) {
-        if (typeof value === 'object' && value !== null) {
-          for (const [subKey, subValue] of Object.entries(value)) {
-            configsToSave.push({
-              key: `${key}.${subKey}`,
-              value: JSON.stringify(subValue),
-              updated_at: new Date().toISOString()
-            });
-          }
-        } else {
-          configsToSave.push({
-            key,
-            value: JSON.stringify(value),
-            updated_at: new Date().toISOString()
-          });
-        }
-      }
-
-      // Salva todas as configurações de uma vez
       const { error } = await supabase
         .from('configurations')
-        .upsert(configsToSave);
+        .upsert(updates, { onConflict: 'key' });
 
       if (error) {
         console.error('Erro ao salvar configurações:', error);
@@ -128,7 +91,6 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // Atualiza o estado local primeiro
       setConfig(prev => ({
         ...prev,
         ...newConfig,
@@ -142,7 +104,6 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         }
       }));
 
-      // Salva no Supabase
       return await saveToSupabase(newConfig);
     } catch (error) {
       console.error('Erro ao atualizar configurações:', error);
@@ -162,50 +123,30 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       console.log('Tentando login com:', email);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        console.error('Erro no login:', error);
+        return false;
+      }
+
+      // Verifica se o email é do administrador
+      const isAdminUser = email === 'tiago.tauruz@gmail.com';
+      setIsAdmin(isAdminUser);
       
-      // Verifica se o usuário é um admin
-      const { data: adminData, error: adminError } = await supabase
-        .from('admins')
-        .select('*')
-        .eq('email', email)
-        .eq('password_hash', password)
-        .single();
-
-      if (adminError) {
-        console.error('Erro ao buscar admin:', adminError);
-        return false;
-      }
-
-      if (!adminData) {
-        console.error('Admin não encontrado');
-        return false;
-      }
-
-      console.log('Admin encontrado:', adminData);
-
-      // Atualiza último login
-      const { error: updateError } = await supabase
-        .from('admins')
-        .update({ 
-          last_login: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', adminData.id);
-
-      if (updateError) {
-        console.error('Erro ao atualizar último login:', updateError);
-      }
-
-      setIsAdmin(true);
-      return true;
+      return isAdminUser;
     } catch (error) {
-      console.error('Erro no login:', error);
+      console.error('Erro ao fazer login:', error);
       return false;
     }
   };
 
   const logout = () => {
     setIsAdmin(false);
+    supabase.auth.signOut();
   };
 
   const resetConfig = () => {
@@ -267,16 +208,11 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         saveConfig,
         isAdmin,
         login,
-        logout
+        logout,
+        isLoading
       }}
     >
-      {isLoading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </ConfigContext.Provider>
   );
 }
