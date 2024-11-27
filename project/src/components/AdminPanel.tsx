@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useConfig } from '../contexts/ConfigContext';
 import { Settings, X, Home, Palette, Type, ChevronLeft, ChevronRight, Save, Wallet, Copy, Lock, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Toast } from './Toast';
 
 export function AdminPanel() {
   const { t } = useTranslation();
@@ -13,6 +14,27 @@ export function AdminPanel() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type });
+  };
+
+  const handleSave = async () => {
+    const success = await saveConfig();
+    if (success) {
+      showToast('Configurações salvas com sucesso!', 'success');
+    } else {
+      showToast('Erro ao salvar configurações. Tente novamente.', 'error');
+    }
+  };
+
+  const handleConfigChange = async (key: string, value: string) => {
+    const success = await updateConfig({ [key]: value });
+    if (!success) {
+      showToast('Erro ao atualizar configuração. Tente novamente.', 'error');
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,26 +45,20 @@ export function AdminPanel() {
       const success = await login(email, password);
       if (!success) {
         setError('Email ou senha inválidos');
+        showToast('Email ou senha inválidos', 'error');
       }
     } catch (err) {
       setError('Erro ao fazer login. Tente novamente.');
+      showToast('Erro ao fazer login. Tente novamente.', 'error');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-    if (!isAdmin) {
-      setEmail('');
-      setPassword('');
-      setError('');
     }
   };
 
   const handleLogout = () => {
     logout();
     setIsOpen(false);
+    showToast('Você foi deslogado com sucesso!', 'success');
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, field: 'logo' | 'favicon') => {
@@ -51,6 +67,7 @@ export function AdminPanel() {
       const reader = new FileReader();
       reader.onloadend = () => {
         updateConfig({ [field]: reader.result as string });
+        showToast('Arquivo carregado com sucesso!', 'success');
       };
       reader.readAsDataURL(file);
     }
@@ -63,16 +80,14 @@ export function AdminPanel() {
         [colorKey]: value
       }
     });
+    showToast('Cor atualizada com sucesso!', 'success');
   };
 
   const handleTextChange = (key: string, value: string) => {
     updateConfig({
       customTexts: { ...config.customTexts, [key]: value }
     });
-  };
-
-  const handleConfigChange = (key: string, value: string) => {
-    updateConfig({ [key]: value });
+    showToast('Texto atualizado com sucesso!', 'success');
   };
 
   const menuItems = [
@@ -104,7 +119,7 @@ export function AdminPanel() {
               Admin Login
             </h2>
             <button
-              onClick={handleClose}
+              onClick={() => setIsOpen(false)}
               className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
               <X className="w-6 h-6" />
@@ -185,7 +200,7 @@ export function AdminPanel() {
 
           <div className="p-4 border-t border-gray-700 space-y-2">
             <button
-              onClick={() => saveConfig()}
+              onClick={handleSave}
               className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center"
             >
               <Save className="w-5 h-5" />
@@ -225,7 +240,7 @@ export function AdminPanel() {
                     <input
                       type="text"
                       value={config.title}
-                      onChange={(e) => updateConfig({ title: e.target.value })}
+                      onChange={(e) => handleConfigChange('title', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -277,7 +292,7 @@ export function AdminPanel() {
                   <input
                     type="text"
                     value={config.footerText}
-                    onChange={(e) => updateConfig({ footerText: e.target.value })}
+                    onChange={(e) => handleConfigChange('footerText', e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -289,7 +304,7 @@ export function AdminPanel() {
                   <input
                     type="text"
                     value={config.buyMeACoffeeText}
-                    onChange={(e) => updateConfig({ buyMeACoffeeText: e.target.value })}
+                    onChange={(e) => handleConfigChange('buyMeACoffeeText', e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                     placeholder={t('footer.buyMeACoffee')}
                   />
@@ -311,7 +326,7 @@ export function AdminPanel() {
                     <input
                       type="text"
                       value={config.wallet1Network}
-                      onChange={(e) => updateConfig({ wallet1Network: e.target.value })}
+                      onChange={(e) => handleConfigChange('wallet1Network', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                       placeholder="SOL"
                     />
@@ -324,7 +339,7 @@ export function AdminPanel() {
                     <input
                       type="text"
                       value={config.wallet1Address}
-                      onChange={(e) => updateConfig({ wallet1Address: e.target.value })}
+                      onChange={(e) => handleConfigChange('wallet1Address', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                       placeholder="Enter wallet address"
                     />
@@ -410,7 +425,7 @@ export function AdminPanel() {
                     <input
                       type="text"
                       value={config.wallet2Network}
-                      onChange={(e) => updateConfig({ wallet2Network: e.target.value })}
+                      onChange={(e) => handleConfigChange('wallet2Network', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                       placeholder="ETH"
                     />
@@ -423,7 +438,7 @@ export function AdminPanel() {
                     <input
                       type="text"
                       value={config.wallet2Address}
-                      onChange={(e) => updateConfig({ wallet2Address: e.target.value })}
+                      onChange={(e) => handleConfigChange('wallet2Address', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                       placeholder="Enter wallet address"
                     />
@@ -509,7 +524,7 @@ export function AdminPanel() {
                     <input
                       type="text"
                       value={config.wallet3Network}
-                      onChange={(e) => updateConfig({ wallet3Network: e.target.value })}
+                      onChange={(e) => handleConfigChange('wallet3Network', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                       placeholder="BTC"
                     />
@@ -522,7 +537,7 @@ export function AdminPanel() {
                     <input
                       type="text"
                       value={config.wallet3Address}
-                      onChange={(e) => updateConfig({ wallet3Address: e.target.value })}
+                      onChange={(e) => handleConfigChange('wallet3Address', e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                       placeholder="Enter wallet address"
                     />
@@ -841,6 +856,15 @@ export function AdminPanel() {
           </div>
         </div>
       </div>
+
+      {/* Toast */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

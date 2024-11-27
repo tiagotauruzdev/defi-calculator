@@ -4,9 +4,9 @@ import { supabase } from '../lib/supabase';
 
 interface ConfigContextType {
   config: AppConfig;
-  updateConfig: (newConfig: Partial<AppConfig>) => void;
+  updateConfig: (newConfig: Partial<AppConfig>) => Promise<boolean>;
   resetConfig: () => void;
-  saveConfig: () => void;
+  saveConfig: () => Promise<boolean>;
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
@@ -77,79 +77,15 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Carrega as configurações iniciais
-  useEffect(() => {
-    const initializeConfig = async () => {
-      await loadConfigFromSupabase();
-      setIsLoading(false);
-    };
-    initializeConfig();
-  }, []);
-
-  // Inscreve para atualizações em tempo real
-  useEffect(() => {
-    const configSubscription = supabase
-      .channel('config-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'configurations'
-        },
-        (payload) => {
-          console.log('Configuração alterada:', payload);
-          loadConfigFromSupabase();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      configSubscription.unsubscribe();
-    };
-  }, []);
-
-  // Atualiza o título e favicon quando as configurações mudam
-  useEffect(() => {
-    if (isLoading) return;
-
-    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-    link.type = 'image/x-icon';
-    link.rel = 'shortcut icon';
-    link.href = config.favicon;
-    document.getElementsByTagName('head')[0].appendChild(link);
-    
-    document.title = config.title;
-  }, [config, isLoading]);
-
-  const updateConfig = async (newConfig: Partial<AppConfig>) => {
-    if (!isAdmin) {
-      console.error('Apenas admins podem atualizar configurações');
-      return;
-    }
-
+  const saveToSupabase = async (configToSave: Partial<AppConfig>): Promise<boolean> => {
     try {
-      console.log('Atualizando configurações:', newConfig);
+      console.log('Salvando configurações no Supabase:', configToSave);
       
-      // Atualiza o estado local primeiro
-      setConfig(prev => ({
-        ...prev,
-        ...newConfig,
-        colors: {
-          ...prev.colors,
-          ...(newConfig.colors || {})
-        },
-        customTexts: {
-          ...prev.customTexts,
-          ...(newConfig.customTexts || {})
-        }
-      }));
-
-      // Prepara as configurações para salvar no Supabase
+      // Prepara as configurações para salvar
       const configsToSave: { key: string; value: string; updated_at: string }[] = [];
 
       // Processa as configurações
-      for (const [key, value] of Object.entries(newConfig)) {
+      for (const [key, value] of Object.entries(configToSave)) {
         if (typeof value === 'object' && value !== null) {
           for (const [subKey, subValue] of Object.entries(value)) {
             configsToSave.push({
@@ -174,14 +110,53 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('Erro ao salvar configurações:', error);
-        throw error;
+        return false;
       }
 
       console.log('Configurações salvas com sucesso');
+      return true;
+    } catch (error) {
+      console.error('Erro ao salvar configurações:', error);
+      return false;
+    }
+  };
+
+  const updateConfig = async (newConfig: Partial<AppConfig>): Promise<boolean> => {
+    if (!isAdmin) {
+      console.error('Apenas admins podem atualizar configurações');
+      return false;
+    }
+
+    try {
+      // Atualiza o estado local primeiro
+      setConfig(prev => ({
+        ...prev,
+        ...newConfig,
+        colors: {
+          ...prev.colors,
+          ...(newConfig.colors || {})
+        },
+        customTexts: {
+          ...prev.customTexts,
+          ...(newConfig.customTexts || {})
+        }
+      }));
+
+      // Salva no Supabase
+      return await saveToSupabase(newConfig);
     } catch (error) {
       console.error('Erro ao atualizar configurações:', error);
-      // Você pode adicionar uma notificação de erro aqui
+      return false;
     }
+  };
+
+  const saveConfig = async (): Promise<boolean> => {
+    if (!isAdmin) {
+      console.error('Apenas admins podem salvar configurações');
+      return false;
+    }
+
+    return await saveToSupabase(config);
   };
 
   const login = async (email: string, password: string) => {
@@ -233,15 +208,55 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     setIsAdmin(false);
   };
 
-  const saveConfig = async () => {
-    if (!isAdmin) return;
-    // Configuração já foi salva no updateConfig
-  };
-
   const resetConfig = () => {
     if (!isAdmin) return;
     setConfig(defaultConfig);
   };
+
+  // Carrega as configurações iniciais
+  useEffect(() => {
+    const initializeConfig = async () => {
+      await loadConfigFromSupabase();
+      setIsLoading(false);
+    };
+    initializeConfig();
+  }, []);
+
+  // Inscreve para atualizações em tempo real
+  useEffect(() => {
+    const configSubscription = supabase
+      .channel('config-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'configurations'
+        },
+        (payload) => {
+          console.log('Configuração alterada:', payload);
+          loadConfigFromSupabase();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      configSubscription.unsubscribe();
+    };
+  }, []);
+
+  // Atualiza o título e favicon quando as configurações mudam
+  useEffect(() => {
+    if (isLoading) return;
+
+    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = config.favicon;
+    document.getElementsByTagName('head')[0].appendChild(link);
+    
+    document.title = config.title;
+  }, [config, isLoading]);
 
   return (
     <ConfigContext.Provider
