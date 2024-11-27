@@ -135,29 +135,27 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      // Primeiro, tenta fazer login com o Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (authError) {
-        console.error('Erro de autenticação:', authError);
-        return false;
-      }
-
       // Verifica se o usuário é um admin
       const { data: adminData, error: adminError } = await supabase
         .from('admins')
         .select('*')
         .eq('email', email)
+        .eq('password_hash', password)
         .single();
 
       if (adminError || !adminData) {
-        console.error('Usuário não é admin:', adminError);
-        await supabase.auth.signOut();
+        console.error('Email ou senha inválidos');
         return false;
       }
+
+      // Atualiza último login
+      await supabase
+        .from('admins')
+        .update({ 
+          last_login: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', adminData.id);
 
       setIsAdmin(true);
       return true;
@@ -167,8 +165,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = async () => {
-    await supabase.auth.signOut();
+  const logout = () => {
     setIsAdmin(false);
   };
 
