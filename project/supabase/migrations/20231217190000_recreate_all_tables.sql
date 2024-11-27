@@ -19,14 +19,18 @@ ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable read for authenticated users only"
     ON admins
     FOR SELECT
-    TO authenticated
     USING (true);
 
--- Insert default admin
--- Username: admin
--- Password: admin123
+-- Create policy for admins table (allow public access for login)
+CREATE POLICY "Enable public read for login"
+    ON admins
+    FOR SELECT
+    TO PUBLIC
+    USING (true);
+
+-- Insert default admin with bcrypt hash of 'admin123'
 INSERT INTO admins (username, password_hash)
-VALUES ('admin', '$2a$10$X7S.glzK2X5mFRG8ZJbJB.S8mGhxqF3XkG9j5Y9YuFQHnqYH5KUPS');
+VALUES ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy');
 
 -- Create configurations table
 CREATE TABLE configurations (
