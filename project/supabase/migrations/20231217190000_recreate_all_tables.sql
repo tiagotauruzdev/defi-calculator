@@ -17,6 +17,16 @@ CREATE TABLE admins (
     last_login TIMESTAMPTZ
 );
 
+-- Enable RLS on admins
+ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
+
+-- Create policy for admins table (allow public read access for login)
+CREATE POLICY "Allow public read access for login"
+    ON admins
+    FOR SELECT
+    TO PUBLIC
+    USING (true);
+
 -- Insert default admin with bcrypt hash of 'admin123'
 INSERT INTO admins (username, password_hash)
 VALUES ('admin', '$2a$10$HrojLZslJNVf9MHl0eIlheATpnfqRAUjS76tfOVa2d9aTEL20ZMOa');
@@ -31,6 +41,26 @@ CREATE TABLE configurations (
     created_by TEXT REFERENCES admins(username),
     updated_by TEXT REFERENCES admins(username)
 );
+
+-- Enable RLS on configurations
+ALTER TABLE configurations ENABLE ROW LEVEL SECURITY;
+
+-- Create policy for configurations table (allow public read access)
+CREATE POLICY "Allow public read access"
+    ON configurations
+    FOR SELECT
+    TO PUBLIC
+    USING (true);
+
+-- Create policy for configurations table (allow admin write access)
+CREATE POLICY "Allow admin write access"
+    ON configurations
+    FOR ALL
+    TO PUBLIC
+    USING (EXISTS (
+        SELECT 1 FROM admins
+        WHERE admins.username = current_user
+    ));
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
