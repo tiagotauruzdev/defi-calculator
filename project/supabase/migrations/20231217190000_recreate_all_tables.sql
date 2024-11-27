@@ -26,7 +26,6 @@ CREATE POLICY "Enable public read for login"
     ON admins
     FOR SELECT
     TO PUBLIC
-    WITH CHECK (true)
     USING (true);
 
 -- Create policy for admins table (authenticated users can update their own data)
@@ -35,8 +34,7 @@ CREATE POLICY "Enable update for authenticated users"
     ON admins
     FOR UPDATE
     TO PUBLIC
-    USING (true)
-    WITH CHECK (true);
+    USING (true);
 
 -- Insert default admin with bcrypt hash of 'admin123'
 INSERT INTO admins (username, password_hash)
