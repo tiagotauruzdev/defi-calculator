@@ -57,10 +57,16 @@ CREATE POLICY "Allow admin write access"
     ON configurations
     FOR ALL
     TO PUBLIC
-    USING (EXISTS (
-        SELECT 1 FROM admins
-        WHERE admins.username = current_user
-    ));
+    USING (
+        EXISTS (
+            SELECT 1 FROM admins 
+            WHERE admins.username = (
+                SELECT raw_user_meta_data->>'username'
+                FROM auth.users 
+                WHERE id = auth.uid()
+            )
+        )
+    );
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
