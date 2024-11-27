@@ -10,7 +10,7 @@ interface ConfigContextType {
   saveConfig: () => Promise<boolean>;
   isAdmin: boolean;
   login: (username: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isLoading: boolean;
 }
 
@@ -161,6 +161,35 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
 
+      // Cria um usuário no auth do Supabase
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: `${username}@defi-calculator.com`,
+        password: password,
+        options: {
+          data: {
+            username: username
+          }
+        }
+      });
+
+      if (signUpError) {
+        // Se o usuário já existe, tenta fazer login
+        if (signUpError.message.includes('already registered')) {
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+            email: `${username}@defi-calculator.com`,
+            password: password
+          });
+
+          if (signInError) {
+            console.error('Erro ao fazer login no Supabase:', signInError);
+            return false;
+          }
+        } else {
+          console.error('Erro ao criar usuário no Supabase:', signUpError);
+          return false;
+        }
+      }
+
       // Atualiza o estado
       setIsAdmin(true);
       setCurrentUsername(username);
@@ -183,9 +212,17 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = () => {
-    setIsAdmin(false);
-    setCurrentUsername(null);
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Erro ao fazer logout:', error);
+      }
+      setIsAdmin(false);
+      setCurrentUsername(null);
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
   };
 
   const resetConfig = () => {
