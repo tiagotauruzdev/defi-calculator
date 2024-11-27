@@ -5,34 +5,44 @@ import { useTranslation } from 'react-i18next';
 
 export function AdminPanel() {
   const { t } = useTranslation();
-  const { config, updateConfig, resetConfig, saveConfig } = useConfig();
+  const { config, updateConfig, resetConfig, saveConfig, isAdmin, login, logout } = useConfig();
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState<'general' | 'colors' | 'texts' | 'wallet' | 'website'>('general');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'admin123') {
-      setIsAuthenticated(true);
-      setError('');
-      setUsername('');
-      setPassword('');
-    } else {
-      setError('Usuário ou senha inválidos');
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      const success = await login(email, password);
+      if (!success) {
+        setError('Email ou senha inválidos');
+      }
+    } catch (err) {
+      setError('Erro ao fazer login. Tente novamente.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleClose = () => {
     setIsOpen(false);
-    if (!isAuthenticated) {
-      setUsername('');
+    if (!isAdmin) {
+      setEmail('');
       setPassword('');
       setError('');
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, field: 'logo' | 'favicon') => {
@@ -82,7 +92,7 @@ export function AdminPanel() {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAdmin) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
@@ -100,12 +110,12 @@ export function AdminPanel() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Usuário
+                Email
               </label>
               <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 required
               />
@@ -127,9 +137,10 @@ export function AdminPanel() {
             )}
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={isLoading}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              Entrar
+              {isLoading ? 'Entrando...' : 'Entrar'}
             </button>
           </form>
         </div>
@@ -176,6 +187,13 @@ export function AdminPanel() {
             >
               <Save className="w-5 h-5" />
               {!isCollapsed && <span className="ml-2">{t('admin.save')}</span>}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center"
+            >
+              <Lock className="w-5 h-5" />
+              {!isCollapsed && <span className="ml-2">Logout</span>}
             </button>
             <button
               onClick={() => setIsOpen(false)}
