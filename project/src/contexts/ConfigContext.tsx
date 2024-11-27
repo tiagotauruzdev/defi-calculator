@@ -135,6 +135,8 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('Tentando login com:', email);
+      
       // Verifica se o usuário é um admin
       const { data: adminData, error: adminError } = await supabase
         .from('admins')
@@ -143,19 +145,30 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         .eq('password_hash', password)
         .single();
 
-      if (adminError || !adminData) {
-        console.error('Email ou senha inválidos');
+      if (adminError) {
+        console.error('Erro ao buscar admin:', adminError);
         return false;
       }
 
+      if (!adminData) {
+        console.error('Admin não encontrado');
+        return false;
+      }
+
+      console.log('Admin encontrado:', adminData);
+
       // Atualiza último login
-      await supabase
+      const { error: updateError } = await supabase
         .from('admins')
         .update({ 
           last_login: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
         .eq('id', adminData.id);
+
+      if (updateError) {
+        console.error('Erro ao atualizar último login:', updateError);
+      }
 
       setIsAdmin(true);
       return true;
