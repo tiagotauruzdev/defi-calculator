@@ -10,7 +10,7 @@ export function AdminPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState<'general' | 'colors' | 'texts' | 'wallet' | 'website'>('general');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -42,10 +42,10 @@ export function AdminPanel() {
     setError('');
     
     try {
-      const success = await login(email, password);
+      const success = await login(username, password);
       if (!success) {
-        setError('Email ou senha inválidos');
-        showToast('Email ou senha inválidos', 'error');
+        setError('Usuário ou senha inválidos');
+        showToast('Usuário ou senha inválidos', 'error');
       }
     } catch (err) {
       setError('Erro ao fazer login. Tente novamente.');
@@ -128,12 +128,12 @@ export function AdminPanel() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email
+                Usuário
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 required
               />
