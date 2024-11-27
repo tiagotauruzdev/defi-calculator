@@ -161,31 +161,26 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
 
-      // Cria um usuário no auth do Supabase
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: `${username}@defi-calculator.com`,
-        password: password,
-        options: {
-          data: {
-            username: username
-          }
-        }
+      // Faz login no Supabase Auth
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: username,
+        password: password
       });
 
-      if (signUpError) {
-        // Se o usuário já existe, tenta fazer login
-        if (signUpError.message.includes('already registered')) {
-          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-            email: `${username}@defi-calculator.com`,
+      if (signInError) {
+        // Se o usuário não existe, cria um novo
+        if (signInError.message.includes('Invalid login credentials')) {
+          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email: username,
             password: password
           });
 
-          if (signInError) {
-            console.error('Erro ao fazer login no Supabase:', signInError);
+          if (signUpError) {
+            console.error('Erro ao criar usuário no Supabase:', signUpError);
             return false;
           }
         } else {
-          console.error('Erro ao criar usuário no Supabase:', signUpError);
+          console.error('Erro ao fazer login no Supabase:', signInError);
           return false;
         }
       }

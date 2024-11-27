@@ -61,10 +61,9 @@ CREATE POLICY "Allow admin write access"
         EXISTS (
             SELECT 1 FROM admins 
             WHERE admins.username = (
-                SELECT raw_user_meta_data->>'username'
-                FROM auth.users 
+                SELECT email FROM auth.users 
                 WHERE id = auth.uid()
-            )
+            )::text
         )
     );
 
@@ -88,6 +87,12 @@ CREATE TRIGGER update_admins_updated_at
     BEFORE UPDATE ON admins
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
+
+-- Grant necessary permissions
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 
 -- Insert default configurations
 INSERT INTO configurations (key, value, created_by, updated_by) VALUES
