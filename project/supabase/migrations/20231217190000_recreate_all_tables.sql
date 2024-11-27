@@ -20,18 +20,23 @@ CREATE TABLE admins (
 -- Enable RLS on admins
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 
--- Create policy for admins table (only authenticated users can read their own data)
-CREATE POLICY "Enable read for authenticated users only"
-    ON admins
-    FOR SELECT
-    USING (true);
-
 -- Create policy for admins table (allow public access for login)
+DROP POLICY IF EXISTS "Enable public read for login" ON admins;
 CREATE POLICY "Enable public read for login"
     ON admins
     FOR SELECT
     TO PUBLIC
+    WITH CHECK (true)
     USING (true);
+
+-- Create policy for admins table (authenticated users can update their own data)
+DROP POLICY IF EXISTS "Enable update for authenticated users" ON admins;
+CREATE POLICY "Enable update for authenticated users"
+    ON admins
+    FOR UPDATE
+    TO PUBLIC
+    USING (true)
+    WITH CHECK (true);
 
 -- Insert default admin with bcrypt hash of 'admin123'
 INSERT INTO admins (username, password_hash)
