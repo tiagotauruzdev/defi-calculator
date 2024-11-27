@@ -28,8 +28,8 @@ CREATE POLICY "Enable write access for specific users"
     ON configurations
     FOR ALL
     TO authenticated
-    USING (auth.jwt() ->> 'email' = 'tiago.tauruz@gmail.com')
-    WITH CHECK (auth.jwt() ->> 'email' = 'tiago.tauruz@gmail.com');
+    USING (auth.jwt() ->> 'email' = 'admin@example.com')
+    WITH CHECK (auth.jwt() ->> 'email' = 'admin@example.com');
 
 -- Function to automatically update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()

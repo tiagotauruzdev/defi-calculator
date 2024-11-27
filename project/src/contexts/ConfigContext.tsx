@@ -134,7 +134,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Verifica se o email é do administrador
-      const isAdminUser = email === 'tiago.tauruz@gmail.com';
+      const isAdminUser = email === 'admin@example.com' && password === 'admin123';
       setIsAdmin(isAdminUser);
       
       return isAdminUser;
