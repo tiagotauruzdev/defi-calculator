@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { AppConfig, defaultConfig } from '../types/config';
 import { supabase } from '../lib/supabase';
+import bcrypt from 'bcryptjs';
 
 interface ConfigContextType {
   config: AppConfig;
@@ -8,7 +9,7 @@ interface ConfigContextType {
   resetConfig: () => void;
   saveConfig: () => Promise<boolean>;
   isAdmin: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -19,6 +20,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   const [config, setConfig] = useState<AppConfig>(defaultConfig);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
 
   const loadConfigFromSupabase = async () => {
     try {
@@ -59,12 +61,18 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   };
 
   const saveToSupabase = async (configToSave: Partial<AppConfig>): Promise<boolean> => {
+    if (!currentUsername) {
+      console.error('Usuário não autenticado');
+      return false;
+    }
+
     try {
       console.log('Salvando configurações no Supabase:', configToSave);
       
       const updates = Object.entries(configToSave).map(([key, value]) => ({
         key,
-        value: key === 'colors' || key === 'customTexts' ? value : JSON.stringify(value)
+        value: key === 'colors' || key === 'customTexts' ? value : JSON.stringify(value),
+        updated_by: currentUsername
       }));
 
       const { error } = await supabase
@@ -120,24 +128,45 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     return await saveToSupabase(config);
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     try {
-      console.log('Tentando login com:', email);
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      console.log('Tentando login com username:', username);
+      
+      // Busca o admin pelo username
+      const { data: adminData, error: adminError } = await supabase
+        .from('admins')
+        .select('username, password_hash')
+        .eq('username', username)
+        .single();
 
-      if (error) {
-        console.error('Erro no login:', error);
+      if (adminError || !adminData) {
+        console.error('Admin não encontrado');
         return false;
       }
 
-      // Verifica se o email é do administrador
-      const isAdminUser = email === 'admin@example.com' && password === 'admin123';
-      setIsAdmin(isAdminUser);
+      // Verifica a senha
+      const isValidPassword = await bcrypt.compare(password, adminData.password_hash);
       
-      return isAdminUser;
+      if (!isValidPassword) {
+        console.error('Senha inválida');
+        return false;
+      }
+
+      // Atualiza o estado
+      setIsAdmin(true);
+      setCurrentUsername(username);
+
+      // Atualiza último login
+      const { error: updateError } = await supabase
+        .from('admins')
+        .update({ last_login: new Date().toISOString() })
+        .eq('username', username);
+
+      if (updateError) {
+        console.error('Erro ao atualizar último login:', updateError);
+      }
+
+      return true;
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       return false;
@@ -146,7 +175,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setIsAdmin(false);
-    supabase.auth.signOut();
+    setCurrentUsername(null);
   };
 
   const resetConfig = () => {
