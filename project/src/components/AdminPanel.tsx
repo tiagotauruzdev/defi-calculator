@@ -56,9 +56,12 @@ export function AdminPanel() {
     }
   };
 
-  const handleColorChange = (key: keyof typeof config.colors, value: string) => {
+  const handleColorChange = (colorKey: keyof typeof config.colors, value: string) => {
     updateConfig({
-      colors: { ...config.colors, [key]: value }
+      colors: {
+        ...config.colors,
+        [colorKey]: value
+      }
     });
   };
 
@@ -340,17 +343,13 @@ export function AdminPanel() {
                           <input
                             type="color"
                             value={config.colors.wallet1Background}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet1Background: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet1Background', e.target.value)}
                             className="h-10 w-20"
                           />
                           <input
                             type="text"
                             value={config.colors.wallet1Background}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet1Background: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet1Background', e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
@@ -364,17 +363,13 @@ export function AdminPanel() {
                           <input
                             type="color"
                             value={config.colors.wallet1Text}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet1Text: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet1Text', e.target.value)}
                             className="h-10 w-20"
                           />
                           <input
                             type="text"
                             value={config.colors.wallet1Text}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet1Text: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet1Text', e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
@@ -388,17 +383,13 @@ export function AdminPanel() {
                           <input
                             type="color"
                             value={config.colors.wallet1Border}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet1Border: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet1Border', e.target.value)}
                             className="h-10 w-20"
                           />
                           <input
                             type="text"
                             value={config.colors.wallet1Border}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet1Border: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet1Border', e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
@@ -451,17 +442,13 @@ export function AdminPanel() {
                           <input
                             type="color"
                             value={config.colors.wallet2Background}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet2Background: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet2Background', e.target.value)}
                             className="h-10 w-20"
                           />
                           <input
                             type="text"
                             value={config.colors.wallet2Background}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet2Background: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet2Background', e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
@@ -475,17 +462,13 @@ export function AdminPanel() {
                           <input
                             type="color"
                             value={config.colors.wallet2Text}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet2Text: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet2Text', e.target.value)}
                             className="h-10 w-20"
                           />
                           <input
                             type="text"
                             value={config.colors.wallet2Text}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet2Text: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet2Text', e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
@@ -499,17 +482,13 @@ export function AdminPanel() {
                           <input
                             type="color"
                             value={config.colors.wallet2Border}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet2Border: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet2Border', e.target.value)}
                             className="h-10 w-20"
                           />
                           <input
                             type="text"
                             value={config.colors.wallet2Border}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet2Border: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet2Border', e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
@@ -562,17 +541,13 @@ export function AdminPanel() {
                           <input
                             type="color"
                             value={config.colors.wallet3Background}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet3Background: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet3Background', e.target.value)}
                             className="h-10 w-20"
                           />
                           <input
                             type="text"
                             value={config.colors.wallet3Background}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet3Background: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet3Background', e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
@@ -586,17 +561,13 @@ export function AdminPanel() {
                           <input
                             type="color"
                             value={config.colors.wallet3Text}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet3Text: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet3Text', e.target.value)}
                             className="h-10 w-20"
                           />
                           <input
                             type="text"
                             value={config.colors.wallet3Text}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet3Text: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet3Text', e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
@@ -610,17 +581,13 @@ export function AdminPanel() {
                           <input
                             type="color"
                             value={config.colors.wallet3Border}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet3Border: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet3Border', e.target.value)}
                             className="h-10 w-20"
                           />
                           <input
                             type="text"
                             value={config.colors.wallet3Border}
-                            onChange={(e) => updateConfig({
-                              colors: { ...config.colors, wallet3Border: e.target.value }
-                            })}
+                            onChange={(e) => handleColorChange('wallet3Border', e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
@@ -636,120 +603,237 @@ export function AdminPanel() {
                 {/* Website Customization */}
                 <div className="space-y-6">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    {t('admin.websiteCustomization')}
+                    Personalização do Website
                   </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Personalize a aparência do seu website ajustando logos, cores e textos.
+                  </p>
                   
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Logo
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileUpload(e, 'logo')}
-                      className="w-full"
-                    />
+                  {/* Logo Section */}
+                  <div className="space-y-4 border-b pb-6">
+                    <h4 className="text-md font-medium text-gray-900 dark:text-gray-100">
+                      Logo e Favicon
+                    </h4>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Logo do Website
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileUpload(e, 'logo')}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Favicon do Website
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileUpload(e, 'favicon')}
+                        className="w-full"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Favicon
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileUpload(e, 'favicon')}
-                      className="w-full"
-                    />
+                  {/* Website URL and Text Section */}
+                  <div className="space-y-4 border-b pb-6">
+                    <h4 className="text-md font-medium text-gray-900 dark:text-gray-100">
+                      URL e Texto Principal
+                    </h4>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        URL do Website
+                      </label>
+                      <input
+                        type="text"
+                        value={config.websiteUrl || ''}
+                        onChange={(e) => handleConfigChange('websiteUrl', e.target.value)}
+                        placeholder="https://salarioemcripto.com.br"
+                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Texto do Website
+                      </label>
+                      <input
+                        type="text"
+                        value={config.websiteText || ''}
+                        onChange={(e) => handleConfigChange('websiteText', e.target.value)}
+                        placeholder="Salário em Cripto"
+                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="flex items-center space-x-2">
+                        <label className="text-sm text-gray-600 dark:text-gray-400">
+                          Cor do Texto:
+                        </label>
+                        <input
+                          type="color"
+                          value={config.colors?.websiteText || '#000000'}
+                          onChange={(e) => handleColorChange('websiteText', e.target.value)}
+                          className="w-8 h-8 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={config.colors?.websiteText || '#000000'}
+                          onChange={(e) => handleColorChange('websiteText', e.target.value)}
+                          className="w-28 px-2 py-1 text-sm border rounded"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {t('admin.websiteUrl')}
-                    </label>
-                    <input
-                      type="text"
-                      value={config.websiteUrl || ''}
-                      onChange={(e) => handleConfigChange('websiteUrl', e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-                    />
-                  </div>
+                  {/* Footer Section */}
+                  <div className="space-y-4">
+                    <h4 className="text-md font-medium text-gray-900 dark:text-gray-100">
+                      Rodapé do Website
+                    </h4>
+                    
+                    {/* Footer Links */}
+                    <div className="space-y-4 border-b pb-6">
+                      <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Links do Rodapé
+                      </h5>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Política de Privacidade
+                          </label>
+                          <input
+                            type="url"
+                            value={config.footerLinks[0]?.url || ''}
+                            onChange={(e) => {
+                              const newLinks = [...config.footerLinks];
+                              newLinks[0] = { ...newLinks[0], url: e.target.value };
+                              updateConfig({ footerLinks: newLinks });
+                            }}
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                            placeholder="https://"
+                          />
+                          <div className="flex items-center space-x-2 mt-2">
+                            <label className="text-sm text-gray-600 dark:text-gray-400">
+                              Cor do Link:
+                            </label>
+                            <input
+                              type="color"
+                              value={config.colors?.privacyLink || '#4F46E5'}
+                              onChange={(e) => handleColorChange('privacyLink', e.target.value)}
+                              className="w-8 h-8 rounded cursor-pointer"
+                            />
+                            <input
+                              type="text"
+                              value={config.colors?.privacyLink || '#4F46E5'}
+                              onChange={(e) => handleColorChange('privacyLink', e.target.value)}
+                              className="w-28 px-2 py-1 text-sm border rounded"
+                            />
+                          </div>
+                        </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {t('admin.websiteText')}
-                    </label>
-                    <input
-                      type="text"
-                      value={config.websiteText || ''}
-                      onChange={(e) => handleConfigChange('websiteText', e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-                    />
-                  </div>
-                </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Termos de Serviço
+                          </label>
+                          <input
+                            type="url"
+                            value={config.footerLinks[1]?.url || ''}
+                            onChange={(e) => {
+                              const newLinks = [...config.footerLinks];
+                              newLinks[1] = { ...newLinks[1], url: e.target.value };
+                              updateConfig({ footerLinks: newLinks });
+                            }}
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                            placeholder="https://"
+                          />
+                          <div className="flex items-center space-x-2 mt-2">
+                            <label className="text-sm text-gray-600 dark:text-gray-400">
+                              Cor do Link:
+                            </label>
+                            <input
+                              type="color"
+                              value={config.colors?.termsLink || '#4F46E5'}
+                              onChange={(e) => handleColorChange('termsLink', e.target.value)}
+                              className="w-8 h-8 rounded cursor-pointer"
+                            />
+                            <input
+                              type="text"
+                              value={config.colors?.termsLink || '#4F46E5'}
+                              onChange={(e) => handleColorChange('termsLink', e.target.value)}
+                              className="w-28 px-2 py-1 text-sm border rounded"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                {/* Footer Section */}
-                <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    {t('admin.footerSection')}
-                  </h3>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t('admin.privacyPolicy')}
-                    </label>
-                    <input
-                      type="url"
-                      value={config.footerLinks[0]?.url || ''}
-                      onChange={(e) => {
-                        const newLinks = [...config.footerLinks];
-                        newLinks[0] = { ...newLinks[0], url: e.target.value };
-                        updateConfig({ footerLinks: newLinks });
-                      }}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
-                      placeholder="https://"
-                    />
-                  </div>
+                    {/* Footer Texts */}
+                    <div className="space-y-4">
+                      <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Textos do Rodapé
+                      </h5>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Texto Principal do Rodapé
+                        </label>
+                        <input
+                          type="text"
+                          value={config.footerText}
+                          onChange={(e) => updateConfig({ footerText: e.target.value })}
+                          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        <div className="flex items-center space-x-2 mt-2">
+                          <label className="text-sm text-gray-600 dark:text-gray-400">
+                            Cor do Texto:
+                          </label>
+                          <input
+                            type="color"
+                            value={config.colors?.footerText || '#6B7280'}
+                            onChange={(e) => handleColorChange('footerText', e.target.value)}
+                            className="w-8 h-8 rounded cursor-pointer"
+                          />
+                          <input
+                            type="text"
+                            value={config.colors?.footerText || '#6B7280'}
+                            onChange={(e) => handleColorChange('footerText', e.target.value)}
+                            className="w-28 px-2 py-1 text-sm border rounded"
+                          />
+                        </div>
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t('admin.termsOfService')}
-                    </label>
-                    <input
-                      type="url"
-                      value={config.footerLinks[1]?.url || ''}
-                      onChange={(e) => {
-                        const newLinks = [...config.footerLinks];
-                        newLinks[1] = { ...newLinks[1], url: e.target.value };
-                        updateConfig({ footerLinks: newLinks });
-                      }}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
-                      placeholder="https://"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t('admin.footerText')}
-                    </label>
-                    <input
-                      type="text"
-                      value={config.footerText}
-                      onChange={(e) => updateConfig({ footerText: e.target.value })}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t('admin.buyMeACoffeeText')}
-                    </label>
-                    <input
-                      type="text"
-                      value={config.buyMeACoffeeText}
-                      onChange={(e) => updateConfig({ buyMeACoffeeText: e.target.value })}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
-                      placeholder={t('footer.buyMeACoffee')}
-                    />
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Texto "Buy Me a Coffee"
+                        </label>
+                        <input
+                          type="text"
+                          value={config.buyMeACoffeeText}
+                          onChange={(e) => updateConfig({ buyMeACoffeeText: e.target.value })}
+                          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                          placeholder="Buy me a coffee ☕"
+                        />
+                        <div className="flex items-center space-x-2 mt-2">
+                          <label className="text-sm text-gray-600 dark:text-gray-400">
+                            Cor do Texto:
+                          </label>
+                          <input
+                            type="color"
+                            value={config.colors?.buyMeACoffeeText || '#4F46E5'}
+                            onChange={(e) => handleColorChange('buyMeACoffeeText', e.target.value)}
+                            className="w-8 h-8 rounded cursor-pointer"
+                          />
+                          <input
+                            type="text"
+                            value={config.colors?.buyMeACoffeeText || '#4F46E5'}
+                            onChange={(e) => handleColorChange('buyMeACoffeeText', e.target.value)}
+                            className="w-28 px-2 py-1 text-sm border rounded"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

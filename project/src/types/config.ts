@@ -18,6 +18,11 @@ export interface ThemeColors {
   wallet3Background: string;
   wallet3Text: string;
   wallet3Border: string;
+  websiteText: string;
+  privacyLink: string;
+  termsLink: string;
+  footerText: string;
+  buyMeACoffeeText: string;
 }
 
 export interface AppConfig {
@@ -77,7 +82,12 @@ export const defaultConfig: AppConfig = {
     wallet2Border: "#1D1E2D",
     wallet3Background: "#333441",
     wallet3Text: "#EDF4F8",
-    wallet3Border: "#1D1E2D"
+    wallet3Border: "#1D1E2D",
+    websiteText: "#EDF4F8",
+    privacyLink: "#90C4E6",
+    termsLink: "#90C4E6",
+    footerText: "#EDF4F8",
+    buyMeACoffeeText: "#E0820B"
   },
   customTexts: {
     poolDetails: "Pool Details",
