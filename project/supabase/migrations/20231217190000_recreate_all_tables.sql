@@ -1,4 +1,9 @@
--- Drop existing tables
+-- Drop existing tables and triggers
+DROP TRIGGER IF EXISTS update_admin_last_login ON auth.sessions;
+DROP TRIGGER IF EXISTS update_configurations_updated_at ON configurations;
+DROP TRIGGER IF EXISTS update_admins_updated_at ON admins;
+DROP FUNCTION IF EXISTS update_last_login();
+DROP FUNCTION IF EXISTS update_updated_at_column();
 DROP TABLE IF EXISTS configurations;
 DROP TABLE IF EXISTS admins;
 
