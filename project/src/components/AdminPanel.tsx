@@ -226,70 +226,6 @@ export function AdminPanel() {
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Logo
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileUpload(e, 'logo')}
-                      className="w-full"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Favicon
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileUpload(e, 'favicon')}
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-
-                {/* Footer Section */}
-                <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    {t('admin.footerSection')}
-                  </h3>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t('admin.privacyPolicy')}
-                    </label>
-                    <input
-                      type="url"
-                      value={config.footerLinks[0]?.url || ''}
-                      onChange={(e) => {
-                        const newLinks = [...config.footerLinks];
-                        newLinks[0] = { ...newLinks[0], url: e.target.value };
-                        updateConfig({ footerLinks: newLinks });
-                      }}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
-                      placeholder="https://"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t('admin.termsOfService')}
-                    </label>
-                    <input
-                      type="url"
-                      value={config.footerLinks[1]?.url || ''}
-                      onChange={(e) => {
-                        const newLinks = [...config.footerLinks];
-                        newLinks[1] = { ...newLinks[1], url: e.target.value };
-                        updateConfig({ footerLinks: newLinks });
-                      }}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
-                      placeholder="https://"
-                    />
-                  </div>
                 </div>
 
                 <div className="pt-4">
@@ -299,37 +235,6 @@ export function AdminPanel() {
                   >
                     Reset to Default
                   </button>
-                </div>
-
-                {/* Website Configuration */}
-                <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                    {t('admin.websiteConfig')}
-                  </h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {t('admin.websiteUrl')}
-                      </label>
-                      <input
-                        type="text"
-                        value={config.websiteUrl || ''}
-                        onChange={(e) => handleConfigChange('websiteUrl', e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {t('admin.websiteText')}
-                      </label>
-                      <input
-                        type="text"
-                        value={config.websiteText || ''}
-                        onChange={(e) => handleConfigChange('websiteText', e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-                      />
-                    </div>
-                  </div>
                 </div>
               </div>
             )}
@@ -727,55 +632,124 @@ export function AdminPanel() {
             )}
 
             {activeMenu === 'website' && (
-              <div className="space-y-6">
-                <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                    {t('admin.websiteConfig')}
+              <div className="space-y-8">
+                {/* Website Customization */}
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    {t('admin.websiteCustomization')}
                   </h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {t('admin.websiteUrl')}
-                      </label>
-                      <input
-                        type="text"
-                        value={config.websiteUrl || ''}
-                        onChange={(e) => handleConfigChange('websiteUrl', e.target.value)}
-                        placeholder="https://salarioemcripto.com.br"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {t('admin.websiteText')}
-                      </label>
-                      <input
-                        type="text"
-                        value={config.websiteText || ''}
-                        onChange={(e) => handleConfigChange('websiteText', e.target.value)}
-                        placeholder="Salário em Cripto"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {t('admin.websiteTextColor')}
-                      </label>
-                      <div className="mt-1 flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={config.colors?.websiteText || '#4F46E5'}
-                          onChange={(e) => handleColorChange('websiteText', e.target.value)}
-                          className="h-8 w-16 rounded cursor-pointer"
-                        />
-                        <input
-                          type="text"
-                          value={config.colors?.websiteText || '#4F46E5'}
-                          onChange={(e) => handleColorChange('websiteText', e.target.value)}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-                        />
-                      </div>
-                    </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Logo
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, 'logo')}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Favicon
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, 'favicon')}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t('admin.websiteUrl')}
+                    </label>
+                    <input
+                      type="text"
+                      value={config.websiteUrl || ''}
+                      onChange={(e) => handleConfigChange('websiteUrl', e.target.value)}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t('admin.websiteText')}
+                    </label>
+                    <input
+                      type="text"
+                      value={config.websiteText || ''}
+                      onChange={(e) => handleConfigChange('websiteText', e.target.value)}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Footer Section */}
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    {t('admin.footerSection')}
+                  </h3>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {t('admin.privacyPolicy')}
+                    </label>
+                    <input
+                      type="url"
+                      value={config.footerLinks[0]?.url || ''}
+                      onChange={(e) => {
+                        const newLinks = [...config.footerLinks];
+                        newLinks[0] = { ...newLinks[0], url: e.target.value };
+                        updateConfig({ footerLinks: newLinks });
+                      }}
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                      placeholder="https://"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {t('admin.termsOfService')}
+                    </label>
+                    <input
+                      type="url"
+                      value={config.footerLinks[1]?.url || ''}
+                      onChange={(e) => {
+                        const newLinks = [...config.footerLinks];
+                        newLinks[1] = { ...newLinks[1], url: e.target.value };
+                        updateConfig({ footerLinks: newLinks });
+                      }}
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                      placeholder="https://"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {t('admin.footerText')}
+                    </label>
+                    <input
+                      type="text"
+                      value={config.footerText}
+                      onChange={(e) => updateConfig({ footerText: e.target.value })}
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {t('admin.buyMeACoffeeText')}
+                    </label>
+                    <input
+                      type="text"
+                      value={config.buyMeACoffeeText}
+                      onChange={(e) => updateConfig({ buyMeACoffeeText: e.target.value })}
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                      placeholder={t('footer.buyMeACoffee')}
+                    />
                   </div>
                 </div>
               </div>
