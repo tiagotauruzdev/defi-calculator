@@ -139,13 +139,22 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         .eq('username', username)
         .single();
 
-      if (adminError || !adminData) {
+      if (adminError) {
+        console.error('Erro ao buscar admin:', adminError);
+        return false;
+      }
+
+      if (!adminData) {
         console.error('Admin não encontrado');
         return false;
       }
 
+      console.log('Admin encontrado:', adminData);
+
       // Verifica a senha
       const isValidPassword = await bcrypt.compare(password, adminData.password_hash);
+      
+      console.log('Senha válida?', isValidPassword);
       
       if (!isValidPassword) {
         console.error('Senha inválida');
@@ -166,6 +175,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         console.error('Erro ao atualizar último login:', updateError);
       }
 
+      console.log('Login bem sucedido!');
       return true;
     } catch (error) {
       console.error('Erro ao fazer login:', error);
